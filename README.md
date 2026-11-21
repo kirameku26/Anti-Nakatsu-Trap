@@ -2,7 +2,7 @@
 
 御堂筋線の梅田駅から北へ向かうときに、降りたい駅まで乗り換えなしで行ける列車を確認するサイトです。
 
-[GitHub Pagesでサイトを開く](https://kirameku26.github.io/Anti-Nakatsu-Trap/)
+[GitHub Pagesでサイトを開く](https://km2.f5.si/Anti-Nakatsu-Trap/)
 
 ## 使い方
 
