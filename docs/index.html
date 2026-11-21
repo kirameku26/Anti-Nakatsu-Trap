@@ -34,6 +34,7 @@
         <p class="next-direct" id="next-direct" hidden>
           <span>次に直通で行ける列車</span>
           <strong id="direct-train"></strong>
+          <span class="direct-wait" id="direct-wait"></span>
         </p>
       </div>
       <p class="timetable-note">通常ダイヤ (日本時間) に基づく案内です。遅延・運休・臨時ダイヤは、駅の発車案内や公式情報で確認してください。</p>
@@ -41,6 +42,10 @@
         <a href="https://kensaku.osakametro.co.jp/timetable/ja/subway/dia/station/29089/1019/2/">梅田駅の公式時刻表</a>
         <a href="https://subway.osakametro.co.jp/guide/subway_information.php">運行情報</a>
       </p>
+      <section class="following-trains" id="following-trains" aria-labelledby="following-title" hidden>
+        <h2 id="following-title">その後の列車</h2>
+        <ol class="following-list" id="following-list" role="list"></ol>
+      </section>
       <noscript><p>JavaScriptを有効にすると、次の列車の案内が表示されます。</p></noscript>
     </section>
 

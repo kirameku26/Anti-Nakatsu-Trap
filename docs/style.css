@@ -125,6 +125,41 @@ h1 {
   font-size: 1.2rem;
   font-variant-numeric: tabular-nums;
 }
+.next-direct .direct-wait {
+  margin-top: .35rem;
+  color: var(--ink);
+  font-size: 1rem;
+  font-weight: 750;
+  font-variant-numeric: tabular-nums;
+}
+.following-trains { margin-top: 1.4rem; }
+.following-list {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: .6rem;
+  margin: .65rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+.following-train {
+  display: grid;
+  justify-items: start;
+  gap: .25rem;
+  padding: .7rem .8rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+}
+.following-time { color: var(--muted); font-size: .875rem; font-variant-numeric: tabular-nums; }
+.following-status {
+  max-width: 100%;
+  padding: .16rem .42rem;
+  border-radius: 4px;
+  font-size: .875rem;
+  font-weight: 700;
+}
+.following-status.reaches { color: var(--green); background: var(--green-soft); }
+.following-status.short { color: var(--red); background: var(--red-soft); }
 .timetable-note {
   margin: .75rem 0 .35rem;
   color: var(--muted);
@@ -303,6 +338,7 @@ details p { color: var(--muted); line-height: 1.75; margin: 0 0 1rem; }
 @media (max-width: 720px) {
   .wrap { width: calc(100% - 36px); }
   .hero { padding: 2rem 0 1.45rem; }
+  .following-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .dashboard { grid-template-columns: 1fr; gap: .9rem; }
   .panel { padding: 1.15rem; }
 }
