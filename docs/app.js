@@ -13,6 +13,102 @@ const stations = new Map([
 ]);
 const terminals = [15, 13, 11, 6];
 
+const shinOsaka = 13;
+const japanOffset = 9 * 60 * 60 * 1000;
+const minuteMs = 60 * 1000;
+const dayMs = 24 * 60 * minuteMs;
+const terminalBySymbol = { '': 6, 中: 15, 新: 13, 江: 11 };
+const timetableByDay = Object.fromEntries(
+  Object.entries(umedaTimetable).map(([day, hours]) => [
+    day,
+    hours.flatMap((row, index) => row.split(' ').map(entry => ({
+      minute: (index + 5) * 60 + Number(entry.slice(0, 2)),
+      terminal: terminalBySymbol[entry.slice(2)],
+    }))),
+  ]),
+);
+
+const departureBoard = document.querySelector('#departure-board');
+const nextTrain = document.querySelector('#next-train');
+const departureVerdict = document.querySelector('#departure-verdict');
+const departureDetail = document.querySelector('#departure-detail');
+const nextDirect = document.querySelector('#next-direct');
+const directTrain = document.querySelector('#direct-train');
+
+function departuresOn(operatingDay) {
+  const holidays = japaneseHolidays[operatingDay.getUTCFullYear()];
+  if (!holidays) return null;
+
+  const weekday = operatingDay.getUTCDay();
+  const monthDay = operatingDay.toISOString().slice(5, 10);
+  const key = weekday === 0 || weekday === 6 || holidays.has(monthDay) ? 'holiday' : 'weekday';
+  return timetableByDay[key].map(train => ({
+    time: operatingDay.getTime() + train.minute * minuteMs,
+    terminal: train.terminal,
+  }));
+}
+
+function upcomingDepartures(now) {
+  const japanNow = new Date(now.getTime() + japanOffset);
+  const serviceDay = new Date(japanNow);
+  serviceDay.setUTCHours(0, 0, 0, 0);
+  // 時刻表の24時台は、前日から続く営業日の列車。
+  if (japanNow.getUTCHours() < 5) {
+    serviceDay.setUTCDate(serviceDay.getUTCDate() - 1);
+  }
+
+  const departures = departuresOn(serviceDay);
+  if (!departures) return [];
+
+  const currentMinute = Math.floor(japanNow.getTime() / minuteMs) * minuteMs;
+  const remaining = departures.filter(train => train.time >= currentMinute);
+  const followingDay = new Date(serviceDay.getTime() + dayMs);
+  return remaining.concat(departuresOn(followingDay) ?? []);
+}
+
+function describeDeparture(train, now) {
+  const departure = new Date(train.time);
+  const japanNow = new Date(now.getTime() + japanOffset);
+  const date = departure.toISOString().slice(0, 10) === japanNow.toISOString().slice(0, 10)
+    ? ''
+    : `${departure.getUTCMonth() + 1}/${departure.getUTCDate()} `;
+  const time = departure.toISOString().slice(11, 16);
+  return `${date}${time}発 · ${stations.get(train.terminal)}行`;
+}
+
+function updateDepartureBoard() {
+  const now = new Date();
+  const upcoming = upcomingDepartures(now);
+  const next = upcoming[0];
+  if (!next) {
+    const unavailable = '梅田発の発車予定を表示できません';
+    if (nextTrain.textContent === unavailable) return;
+    departureBoard.dataset.state = 'unknown';
+    nextTrain.textContent = unavailable;
+    departureVerdict.textContent = '公式時刻表で確認';
+    departureDetail.hidden = true;
+    nextDirect.hidden = true;
+    return;
+  }
+
+  const nextLabel = describeDeparture(next, now);
+  if (nextTrain.textContent === nextLabel) return;
+
+  const reaches = next.terminal <= shinOsaka;
+  const direct = upcoming.find(train => train.terminal <= shinOsaka);
+  departureBoard.dataset.state = reaches ? 'direct' : 'short';
+  nextTrain.textContent = nextLabel;
+  departureVerdict.textContent = reaches ? '乗り換えなしで行けます' : '中津止まりです';
+  departureDetail.hidden = reaches;
+  departureDetail.textContent = '新大阪まで行く列車を待ちましょう。';
+  nextDirect.hidden = reaches || !direct;
+  if (direct) directTrain.textContent = describeDeparture(direct, now);
+}
+
+updateDepartureBoard();
+setInterval(updateDepartureBoard, 5000);
+document.addEventListener('visibilitychange', updateDepartureBoard);
+
 const destination = document.querySelector('#destination');
 const shortcuts = document.querySelectorAll('[data-station]');
 const board = document.querySelector('#board');

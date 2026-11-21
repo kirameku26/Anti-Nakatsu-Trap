@@ -3,10 +3,11 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="御堂筋線の梅田から北へ。降りたい駅を選んで、乗る列車の行先を確認できます。">
+  <meta name="description" content="梅田発の次の御堂筋線で新大阪に直通できるか、公式時刻表をもとに確認できます。">
   <meta name="theme-color" content="#f7f7f5">
   <title>中津トラップ回避ガイド</title>
   <link rel="stylesheet" href="./style.css">
+  <script src="./timetable.js" defer></script>
   <script src="./app.js" defer></script>
 </head>
 <body>
@@ -23,8 +24,24 @@
   <main class="wrap">
     <section class="hero" aria-labelledby="title">
       <p class="eyebrow"><span aria-hidden="true"></span> Osaka Metro 御堂筋線 <span class="eyebrow-divider" aria-hidden="true"></span> 梅田発・北行き</p>
-      <h1 id="title">中津止まりを、<br><span>乗る前にチェック。</span></h1>
-      <p class="intro">新大阪やその先へ。降りたい駅を選んで、ホームで待つ列車の行先を確認しましょう。</p>
+      <h1 id="title">次の列車で新大阪へ</h1>
+      <div class="departure-board" id="departure-board" data-state="unknown" aria-live="polite" aria-atomic="true">
+        <div>
+          <p class="departure-label" id="next-train">梅田発の次の列車</p>
+          <p class="departure-verdict" id="departure-verdict">行先を確認中</p>
+          <p class="departure-detail" id="departure-detail" hidden></p>
+        </div>
+        <p class="next-direct" id="next-direct" hidden>
+          <span>次に直通で行ける列車</span>
+          <strong id="direct-train"></strong>
+        </p>
+      </div>
+      <p class="timetable-note">通常ダイヤ (日本時間) に基づく案内です。遅延・運休・臨時ダイヤは、駅の発車案内や公式情報で確認してください。</p>
+      <p class="timetable-links">
+        <a href="https://kensaku.osakametro.co.jp/timetable/ja/subway/dia/station/29089/1019/2/">梅田駅の公式時刻表</a>
+        <a href="https://subway.osakametro.co.jp/guide/subway_information.php">運行情報</a>
+      </p>
+      <noscript><p>JavaScriptを有効にすると、次の列車の案内が表示されます。</p></noscript>
     </section>
 
     <div class="dashboard">
